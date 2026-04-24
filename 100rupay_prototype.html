@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>100 روپے — Civic Infrastructure Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Sora:wght@300;400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f0e;
+    --surface: #141714;
+    --surface2: #1a1d1a;
+    --border: #252825;
+    --border2: #2f342f;
+    --text: #e8ece8;
+    --text2: #8a9488;
+    --text3: #5a635a;
+    --accent-escrow: #c8f560;          /* locked escrow – lime */
+    --accent-verified: #60f5c0;        /* AI verified – mint */
+    --accent-payout: #f5a623;          /* payout released – amber */
+    --accent-urgent: #f55a5a;          /* urgent – red */
+    --accent-funded: #60c8f5;          /* funded – sky */
+    --accent-handshake: #b060f5;       /* human check – violet */
+    --font-mono: 'IBM Plex Mono', monospace;
+    --font-sans: 'Sora', sans-serif;
+    --font-urdu: 'Noto Nastaliq Urdu', serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── APP SHELL ── */
+  .app-shell {
+    display: grid;
+    grid-template-rows: 52px 1fr 64px;
+    height: 100vh;
+    max-width: 1440px;
+    margin: 0 auto;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: relative;
+    z-index: 100;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-mark {
+    width: 28px; height: 28px;
+    background: var(--accent-escrow);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 10px; font-weight: 600;
+    color: #0d0f0e;
+    letter-spacing: -0.5px;
+  }
+  .logo-text {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+  .logo-urdu {
+    font-family: var(--font-urdu);
+    font-size: 13px;
+    color: var(--accent-escrow);
+    margin-top: 1px;
+  }
+  .topbar-meta {
+    display: flex; align-items: center; gap: 20px;
+  }
+  .status-pill {
+    display: flex; align-items: center; gap: 6px;
+    padding: 3px 10px;
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text2);
+  }
+  .status-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent-escrow);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100%{opacity:1} 50%{opacity:.4}
+  }
+  .topbar-stats {
+    display: flex; gap: 24px;
+  }
+  .tstat {
+    display: flex; flex-direction: column; align-items: flex-end;
+  }
+  .tstat-val {
+    font-family: var(--font-mono);
+    font-size: 13px; font-weight: 600;
+    color: var(--text);
+  }
+  .tstat-lbl {
+    font-size: 9px; color: var(--text3);
+    text-transform: uppercase; letter-spacing: .8px;
+  }
+
+  /* ── CONTENT AREA ── */
+  .content {
+    overflow: hidden;
+    position: relative;
+  }
+  .screen {
+    position: absolute; inset: 0;
+    overflow-y: auto;
+    opacity: 0; pointer-events: none;
+    transform: translateY(8px);
+    transition: opacity .25s ease, transform .25s ease;
+  }
+  .screen.active {
+    opacity: 1; pointer-events: all;
+    transform: translateY(0);
+  }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    display: flex;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .nav-tab {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 4px;
+    padding: 10px 0;
+    cursor: pointer;
+    border: none; background: none;
+    color: var(--text3);
+    font-family: var(--font-sans);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    transition: color .2s;
+    position: relative;
+  }
+  .nav-tab::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 20%; right: 20%;
+    height: 2px;
+    background: var(--accent-escrow);
+    transform: scaleX(0);
+    transition: transform .2s;
+    border-radius: 0 0 2px 2px;
+  }
+  .nav-tab.active {
+    color: var(--accent-escrow);
+  }
+  .nav-tab.active::before {
+    transform: scaleX(1);
+  }
+  .nav-icon {
+    font-size: 18px; line-height: 1;
+  }
+
+  /* ── SHARED LAYOUT PRIMITIVES ── */
+  .page-grid {
+    display: grid;
+    gap: 1px;
+    background: var(--border);
+    height: 100%;
+  }
+  .panel {
+    background: var(--surface);
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .panel-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .panel-title {
+    font-family: var(--font-mono);
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1.2px;
+    color: var(--text3);
+  }
+  .panel-value {
+    font-family: var(--font-mono);
+    font-size: 22px; font-weight: 600;
+    color: var(--text);
+    line-height: 1;
+  }
+  .tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-family: var(--font-mono);
+    font-size: 9px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .6px;
+  }
+  .tag-escrow   { background: rgba(200,245,96,.12);  color: var(--accent-escrow);    border: 1px solid rgba(200,245,96,.25); }
+  .tag-verified { background: rgba(96,245,192,.12);  color: var(--accent-verified);  border: 1px solid rgba(96,245,192,.25); }
+  .tag-payout   { background: rgba(245,166,35,.12);  color: var(--accent-payout);    border: 1px solid rgba(245,166,35,.25); }
+  .tag-urgent   { background: rgba(245,90,90,.12);   color: var(--accent-urgent);    border: 1px solid rgba(245,90,90,.25); }
+  .tag-funded   { background: rgba(96,200,245,.12);  color: var(--accent-funded);    border: 1px solid rgba(96,200,245,.25); }
+  .tag-pending  { background: rgba(90,99,90,.15);    color: var(--text2);            border: 1px solid var(--border2); }
+  .tag-hand     { background: rgba(176,96,245,.12);  color: var(--accent-handshake); border: 1px solid rgba(176,96,245,.25); }
+  .divider {
+    height: 1px; background: var(--border);
+    margin: 14px 0;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .6px;
+    cursor: pointer; border: none;
+    transition: all .15s;
+  }
+  .btn-primary {
+    background: var(--accent-escrow);
+    color: #0d0f0e;
+  }
+  .btn-primary:hover { filter: brightness(1.1); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text2);
+    border: 1px solid var(--border2);
+  }
+  .btn-ghost:hover { border-color: var(--text2); color: var(--text); }
+  .progress-bar-wrap {
+    height: 4px; background: var(--border2);
+    border-radius: 2px; overflow: hidden;
+    margin: 6px 0;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--accent-escrow);
+  }
+
+  /* ── SCREEN A: THE BALLOT ── */
+  #screenA .page-grid {
+    grid-template-columns: 1fr 340px;
+    grid-template-rows: 1fr;
+  }
+  .map-panel {
+    position: relative;
+    overflow: hidden;
+    background: var(--surface2);
+    min-height: 500px;
+  }
+  .map-bg {
+    position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 39px, var(--border) 39px, var(--border) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, var(--border) 40px, var(--border) 40px);
+    opacity: .4;
+  }
+  .map-roads {
+    position: absolute; inset: 0;
+  }
+  .map-overlay-text {
+    position: absolute; bottom: 20px; left: 20px;
+    font-family: var(--font-mono); font-size: 9px; color: var(--text3);
+    letter-spacing: .8px; text-transform: uppercase;
+  }
+  .map-pin {
+    position: absolute;
+    display: flex; flex-direction: column; align-items: center;
+    cursor: pointer;
+    transition: transform .2s;
+  }
+  .map-pin:hover { transform: translateY(-4px) scale(1.1); }
+  .map-pin-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+    position: relative;
+  }
+  .map-pin-dot::after {
+    content: '';
+    position: absolute; inset: -5px;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    opacity: .3;
+    animation: ripple 2.5s infinite;
+  }
+  @keyframes ripple {
+    0%{transform:scale(.7);opacity:.4} 70%{transform:scale(1.4);opacity:0} 100%{opacity:0}
+  }
+  .map-pin-label {
+    font-family: var(--font-mono); font-size: 8px;
+    background: var(--surface); padding: 2px 5px;
+    border: 1px solid var(--border2);
+    border-radius: 2px; white-space: nowrap;
+    margin-top: 4px; color: var(--text2);
+  }
+  .cards-panel { display: flex; flex-direction: column; gap: 0; }
+  .cards-header {
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; background: var(--surface); z-index: 10;
+  }
+  .project-card {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .project-card:hover { background: var(--surface2); }
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+  .card-title { font-weight: 600; font-size: 13px; color: var(--text); line-height: 1.3; }
+  .card-loc {
+    font-family: var(--font-mono); font-size: 9px; color: var(--text3);
+    margin-top: 2px; letter-spacing: .4px;
+  }
+  .card-funding {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--font-mono); font-size: 10px; color: var(--text2);
+    margin-top: 6px;
+  }
+  .card-funding-amount { color: var(--accent-escrow); font-weight: 600; }
+  .map-controls {
+    position: absolute; top: 20px; right: 20px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .map-ctrl-btn {
+    width: 32px; height: 32px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 16px; color: var(--text2);
+    transition: all .15s;
+  }
+  .map-ctrl-btn:hover { color: var(--text); border-color: var(--text3); }
+
+  /* ── SCREEN B: AUCTION ── */
+  #screenB .page-grid {
+    grid-template-columns: 260px 1fr;
+    grid-template-rows: 1fr;
+  }
+  .bid-stat-row {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 1px; background: var(--border);
+    margin-bottom: 1px;
+  }
+  .bid-stat {
+    background: var(--surface);
+    padding: 14px 16px;
+  }
+  .project-list-item {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background .15s;
+    display: flex; flex-direction: column; gap: 5px;
+  }
+  .project-list-item:hover, .project-list-item.selected {
+    background: var(--surface2);
+  }
+  .project-list-item.selected {
+    border-left: 2px solid var(--accent-escrow);
+  }
+  .pli-title { font-weight: 600; font-size: 12px; }
+  .pli-meta {
+    display: flex; gap: 6px; align-items: center;
+  }
+  .trust-score {
+    display: flex; align-items: center; gap: 4px;
+    font-family: var(--font-mono); font-size: 10px;
+  }
+  .trust-bar {
+    width: 40px; height: 3px; background: var(--border2);
+    border-radius: 2px; overflow: hidden;
+  }
+  .trust-fill {
+    height: 100%; background: var(--accent-escrow);
+    border-radius: 2px;
+  }
+  .bids-table { width: 100%; border-collapse: collapse; }
+  .bids-table th {
+    font-family: var(--font-mono); font-size: 9px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .8px; color: var(--text3);
+    padding: 8px 12px; text-align: left;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  .bids-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono); font-size: 11px; color: var(--text2);
+    vertical-align: middle;
+  }
+  .bids-table tr:hover td { background: var(--surface2); }
+  .bid-form {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 16px;
+    margin-top: 16px;
+  }
+  .form-row { display: flex; gap: 10px; }
+  .form-field { flex: 1; }
+  .form-label {
+    font-family: var(--font-mono); font-size: 9px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .8px; color: var(--text3);
+    display: block; margin-bottom: 5px;
+  }
+  .form-input {
+    width: 100%; padding: 8px 10px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--font-mono); font-size: 12px;
+    outline: none;
+    transition: border .15s;
+  }
+  .form-input:focus { border-color: var(--accent-escrow); }
+  .fixer-card {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 14px;
+    margin-bottom: 1px;
+  }
+  .fixer-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-weight: 700; font-size: 13px;
+    background: var(--border2); color: var(--text2);
+  }
+
+  /* ── SCREEN C: ESCROW ── */
+  #screenC .page-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  .split-visual {
+    display: flex; height: 10px;
+    border-radius: 3px; overflow: hidden;
+    margin: 14px 0;
+  }
+  .split-seg { height: 100%; transition: flex .5s; }
+  .flow-step {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .flow-step:last-child { border-bottom: none; }
+  .flow-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--border2);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 9px; font-weight: 700;
+    color: var(--text3); flex-shrink: 0; margin-top: 1px;
+  }
+  .flow-content { flex: 1; }
+  .flow-title { font-weight: 600; font-size: 12px; margin-bottom: 2px; }
+  .flow-desc { font-size: 11px; color: var(--text2); line-height: 1.5; }
+  .ledger-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono); font-size: 11px;
+  }
+  .ledger-row:last-child { border-bottom: none; }
+  .ledger-label { color: var(--text2); }
+  .ledger-value { font-weight: 600; }
+  .big-split {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: var(--border);
+    margin: 14px 0;
+  }
+  .split-block {
+    padding: 16px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .split-pct {
+    font-family: var(--font-mono);
+    font-size: 32px; font-weight: 700;
+    line-height: 1;
+  }
+  .split-role {
+    font-family: var(--font-mono); font-size: 9px;
+    text-transform: uppercase; letter-spacing: .8px; color: var(--text3);
+  }
+  .split-desc { font-size: 11px; color: var(--text2); line-height: 1.4; margin-top: 4px; }
+  .contract-addr {
+    font-family: var(--font-mono); font-size: 9px; color: var(--text3);
+    background: var(--border);
+    padding: 4px 8px; border-radius: 3px; margin-top: 6px;
+    letter-spacing: .4px;
+  }
+
+  /* ── SCREEN D: VERIFICATION ── */
+  #screenD .page-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+  }
+  .node-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  .node-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 12px; font-weight: 700;
+  }
+  .node1-num { background: rgba(96,245,192,.15); color: var(--accent-verified); border: 1px solid rgba(96,245,192,.3); }
+  .node2-num { background: rgba(176,96,245,.15); color: var(--accent-handshake); border: 1px solid rgba(176,96,245,.3); }
+  .node-title { font-weight: 600; font-size: 13px; }
+  .node-sub { font-size: 10px; color: var(--text2); margin-top: 1px; }
+  .compare-wrap {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: var(--border);
+    margin: 16px 0;
+    border-radius: 6px; overflow: hidden;
+  }
+  .compare-slot {
+    position: relative;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+  }
+  .compare-label {
+    position: absolute; top: 8px; left: 8px;
+    font-family: var(--font-mono); font-size: 9px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .6px;
+    background: rgba(13,15,14,.8); padding: 3px 7px;
+    border-radius: 3px; color: var(--text2);
+    z-index: 2;
+  }
+  .compare-img-before {
+    width: 100%; height: 100%; object-fit: cover;
+    background: linear-gradient(135deg, #1a1d1a 0%, #252825 100%);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ai-overlay {
+    position: absolute; inset: 0;
+    display: flex; align-items: flex-end;
+    padding: 10px;
+  }
+  .ai-badge {
+    width: 100%;
+    padding: 6px 10px;
+    background: rgba(96,245,192,.12);
+    border: 1px solid rgba(96,245,192,.3);
+    border-radius: 4px;
+    font-family: var(--font-mono); font-size: 9px; font-weight: 600;
+    color: var(--accent-verified);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .qr-wrap {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    padding: 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    margin: 16px 0;
+  }
+  .qr-box {
+    width: 120px; height: 120px;
+    background: var(--text);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .qr-scan-line {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent-handshake);
+    animation: scanline 2s linear infinite;
+    box-shadow: 0 0 8px var(--accent-handshake);
+  }
+  @keyframes scanline {
+    0%{top:0} 100%{top:100%}
+  }
+  .geo-badge {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px;
+    background: rgba(176,96,245,.1);
+    border: 1px solid rgba(176,96,245,.25);
+    border-radius: 20px;
+    font-family: var(--font-mono); font-size: 10px; color: var(--accent-handshake);
+  }
+  .dual-lock-status {
+    display: flex; flex-direction: column; gap: 8px;
+    margin-top: 12px;
+  }
+  .lock-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 4px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    font-family: var(--font-mono); font-size: 10px;
+  }
+  .lock-row.done {
+    border-color: rgba(96,245,192,.3);
+    background: rgba(96,245,192,.05);
+  }
+  .lock-check { color: var(--accent-verified); font-size: 14px; }
+  .lock-pending { color: var(--text3); font-size: 14px; }
+  .image-placeholder {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px;
+    background: var(--surface2);
+  }
+  .scan-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+    gap: 2px; padding: 8px; width: 100%; height: 100%;
+  }
+  .scan-cell {
+    background: #0d0f0e;
+    border-radius: 1px;
+  }
+  .scan-cell.w { background: var(--text); }
+
+  /* ── SCREEN E: WALLET ── */
+  #screenE .page-grid {
+    grid-template-columns: 280px 1fr;
+    grid-template-rows: 1fr;
+  }
+  .role-tabs {
+    display: flex; flex-direction: column;
+    border-bottom: none;
+  }
+  .role-tab {
+    padding: 14px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    transition: background .15s;
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .role-tab:hover { background: var(--surface2); }
+  .role-tab.active { background: var(--surface2); border-left: 2px solid var(--accent-payout); }
+  .role-name { font-weight: 600; font-size: 12px; }
+  .role-id { font-family: var(--font-mono); font-size: 9px; color: var(--text3); }
+  .wallet-balance {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: var(--border);
+    margin-bottom: 1px;
+  }
+  .balance-card {
+    padding: 16px 20px;
+    background: var(--surface);
+  }
+  .balance-lbl {
+    font-family: var(--font-mono); font-size: 9px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .8px; color: var(--text3);
+    margin-bottom: 6px;
+  }
+  .balance-val {
+    font-family: var(--font-mono); font-size: 20px; font-weight: 700;
+    line-height: 1;
+  }
+  .balance-sub { font-size: 10px; color: var(--text2); margin-top: 3px; }
+  .tx-table { width: 100%; border-collapse: collapse; }
+  .tx-table th {
+    font-family: var(--font-mono); font-size: 9px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .8px; color: var(--text3);
+    padding: 8px 16px; text-align: left;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+    position: sticky; top: 0;
+  }
+  .tx-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono); font-size: 11px; color: var(--text2);
+  }
+  .tx-table tr:hover td { background: var(--surface2); }
+  .tx-amount { font-weight: 600; }
+  .tx-amount.in { color: var(--accent-escrow); }
+  .tx-amount.out { color: var(--accent-urgent); }
+  .tx-amount.locked { color: var(--accent-payout); }
+  .voucher-card {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    #screenA .page-grid { grid-template-columns: 1fr; }
+    #screenB .page-grid { grid-template-columns: 1fr; }
+    #screenC .page-grid { grid-template-columns: 1fr; }
+    #screenD .page-grid { grid-template-columns: 1fr; }
+    #screenE .page-grid { grid-template-columns: 1fr; }
+    .map-panel { min-height: 260px; }
+    .topbar-stats { display: none; }
+    .big-split { grid-template-columns: 1fr; }
+    .wallet-balance { grid-template-columns: 1fr; }
+  }
+
+  /* Tooltip */
+  .tooltip { position: relative; }
+  .tooltip:hover .tooltip-text {
+    opacity: 1; pointer-events: all; transform: translateY(0);
+  }
+  .tooltip-text {
+    position: absolute; bottom: calc(100% + 6px); left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    white-space: nowrap;
+    background: var(--surface2); border: 1px solid var(--border2);
+    padding: 4px 8px; border-radius: 3px;
+    font-family: var(--font-mono); font-size: 9px; color: var(--text2);
+    opacity: 0; pointer-events: none;
+    transition: all .15s;
+    z-index: 200;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="logo">
+      <div class="logo-mark">₨</div>
+      <div>
+        <div class="logo-text">100 RUPAY</div>
+      </div>
+      <div class="logo-urdu">١٠٠ روپے</div>
+    </div>
+    <div class="topbar-meta">
+      <div class="status-pill">
+        <div class="status-dot"></div>
+        Escrow Network · Online
+      </div>
+      <div class="topbar-stats">
+        <div class="tstat">
+          <div class="tstat-val">342</div>
+          <div class="tstat-lbl">Active Issues</div>
+        </div>
+        <div class="tstat">
+          <div class="tstat-val">₨ 8.4L</div>
+          <div class="tstat-lbl">Locked Escrow</div>
+        </div>
+        <div class="tstat">
+          <div class="tstat-val">97 %</div>
+          <div class="tstat-lbl">Verify Rate</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- SCREEN A: THE BALLOT -->
+    <section id="screenA" class="screen active">
+      <div class="page-grid" style="grid-template-columns:1fr 340px;height:100%;">
+        <!-- MAP -->
+        <div class="map-panel panel" style="padding:0;">
+          <div class="map-bg"></div>
+          <svg class="map-roads" viewBox="0 0 800 600" style="position:absolute;inset:0;width:100%;height:100%;opacity:.18">
+            <path d="M0,200 Q200,180 400,220 T800,200" stroke="#8a9488" stroke-width="2" fill="none"/>
+            <path d="M0,350 Q300,330 500,370 T800,350" stroke="#8a9488" stroke-width="1.5" fill="none"/>
+            <path d="M250,0 Q270,150 260,300 T240,600" stroke="#8a9488" stroke-width="2" fill="none"/>
+            <path d="M520,0 Q540,200 530,400 T510,600" stroke="#8a9488" stroke-width="1.5" fill="none"/>
+            <path d="M0,480 L800,490" stroke="#8a9488" stroke-width="1" fill="none"/>
+            <path d="M120,0 L130,600" stroke="#8a9488" stroke-width="1" fill="none"/>
+          </svg>
+          <!-- PINS -->
+          <div class="map-pin" style="left:22%;top:28%;">
+            <div class="map-pin-dot" style="background:var(--accent-urgent);color:var(--accent-urgent);"></div>
+            <div class="map-pin-label">Pothole · URGENT</div>
+          </div>
+          <div class="map-pin" style="left:48%;top:38%;">
+            <div class="map-pin-dot" style="background:var(--accent-escrow);color:var(--accent-escrow);"></div>
+            <div class="map-pin-label">Streetlight · 74% funded</div>
+          </div>
+          <div class="map-pin" style="left:62%;top:55%;">
+            <div class="map-pin-dot" style="background:var(--accent-funded);color:var(--accent-funded);"></div>
+            <div class="map-pin-label">Drain · Fully Funded ✓</div>
+          </div>
+          <div class="map-pin" style="left:33%;top:62%;">
+            <div class="map-pin-dot" style="background:var(--accent-payout);color:var(--accent-payout);"></div>
+            <div class="map-pin-label">Road Crack · 41%</div>
+          </div>
+          <div class="map-pin" style="left:72%;top:25%;">
+            <div class="map-pin-dot" style="background:var(--accent-urgent);color:var(--accent-urgent);"></div>
+            <div class="map-pin-label">Open Manhole · URGENT</div>
+          </div>
+          <div class="map-pin" style="left:15%;top:68%;">
+            <div class="map-pin-dot" style="background:var(--accent-escrow);color:var(--accent-escrow);"></div>
+            <div class="map-pin-label">Wall Repair · 60%</div>
+          </div>
+          <div class="map-controls">
+            <div class="map-ctrl-btn">+</div>
+            <div class="map-ctrl-btn">−</div>
+            <div class="map-ctrl-btn" style="font-size:12px;">⊕</div>
+          </div>
+          <div class="map-overlay-text">Karachi Urban Grid · v2.4 · 342 geo-tagged reports</div>
+        </div>
+
+        <!-- CARDS SIDEBAR -->
+        <div class="cards-panel panel" style="padding:0;">
+          <div class="cards-header">
+            <div>
+              <div style="font-weight:600;font-size:13px;">The Ballot</div>
+              <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-top:2px;">342 active · 18 fully funded</div>
+            </div>
+            <button class="btn btn-primary" style="font-size:9px;padding:5px 10px;">+ Report</button>
+          </div>
+
+          <!-- CARDS -->
+          <div class="project-card">
+            <div class="card-top">
+              <div>
+                <div class="card-title">Open Manhole — Bahadurabad</div>
+                <div class="card-loc">📍 24.8741° N, 67.0601° E</div>
+              </div>
+              <span class="tag tag-urgent">Urgent</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" style="width:89%;background:var(--accent-urgent);"></div>
+            </div>
+            <div class="card-funding">
+              <span>890 / 1,000 Units</span>
+              <span class="card-funding-amount">₨ 89,000 raised</span>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div class="card-top">
+              <div>
+                <div class="card-title">Broken Streetlight — PECHS Block 2</div>
+                <div class="card-loc">📍 24.8590° N, 67.0718° E</div>
+              </div>
+              <span class="tag tag-escrow">Active</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" style="width:74%;"></div>
+            </div>
+            <div class="card-funding">
+              <span>740 / 1,000 Units</span>
+              <span class="card-funding-amount">₨ 74,000 raised</span>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div class="card-top">
+              <div>
+                <div class="card-title">Storm Drain Blockage — Gulshan-e-Iqbal</div>
+                <div class="card-loc">📍 24.9203° N, 67.1124° E</div>
+              </div>
+              <span class="tag tag-funded">Funded ✓</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" style="width:100%;background:var(--accent-funded);"></div>
+            </div>
+            <div class="card-funding">
+              <span>1,000 / 1,000 Units</span>
+              <span class="card-funding-amount">Auction Open</span>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div class="card-top">
+              <div>
+                <div class="card-title">Road Crack — Clifton Block 4</div>
+                <div class="card-loc">📍 24.8108° N, 67.0261° E</div>
+              </div>
+              <span class="tag tag-pending">Pending</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" style="width:41%;background:var(--accent-payout);"></div>
+            </div>
+            <div class="card-funding">
+              <span>410 / 1,000 Units</span>
+              <span class="card-funding-amount">₨ 41,000 raised</span>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div class="card-top">
+              <div>
+                <div class="card-title">Perimeter Wall Repair — North Nazimabad</div>
+                <div class="card-loc">📍 24.9391° N, 67.0424° E</div>
+              </div>
+              <span class="tag tag-escrow">Active</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" style="width:60%;"></div>
+            </div>
+            <div class="card-funding">
+              <span>600 / 1,000 Units</span>
+              <span class="card-funding-amount">₨ 60,000 raised</span>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div class="card-top">
+              <div>
+                <div class="card-title">Pavement Resurfacing — Saddar</div>
+                <div class="card-loc">📍 24.8607° N, 67.0099° E</div>
+              </div>
+              <span class="tag tag-pending">Pending</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" style="width:22%;background:var(--accent-payout);"></div>
+            </div>
+            <div class="card-funding">
+              <span>220 / 2,500 Units</span>
+              <span class="card-funding-amount">₨ 22,000 raised</span>
+            </div>
+          </div>
+
+          <div style="padding:14px 20px;text-align:center;">
+            <button class="btn btn-ghost" style="width:100%;">Load 42 more issues ↓</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN B: AUCTION -->
+    <section id="screenB" class="screen">
+      <div class="page-grid" style="grid-template-columns:260px 1fr;height:100%;">
+        <!-- LEFT: project list -->
+        <div class="panel" style="padding:0;overflow-y:auto;">
+          <div style="padding:14px 16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:10;">
+            <div style="font-weight:600;font-size:13px;">Open Auctions</div>
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-top:2px;">3 fully-funded projects</div>
+          </div>
+          <div class="role-tabs">
+            <div class="project-list-item selected">
+              <div class="pli-title">Storm Drain — Gulshan-e-Iqbal</div>
+              <div class="pli-meta">
+                <span class="tag tag-funded" style="font-size:8px;">₨ 100,000</span>
+                <span class="tag tag-urgent" style="font-size:8px;">3 bids</span>
+              </div>
+              <div class="trust-score" style="margin-top:4px;">
+                <span style="color:var(--text3);">Your score:</span>
+                <div class="trust-bar"><div class="trust-fill" style="width:82%;"></div></div>
+                <span style="color:var(--accent-escrow);">8.2</span>
+              </div>
+            </div>
+            <div class="project-list-item">
+              <div class="pli-title">Streetlight — PECHS Block 2</div>
+              <div class="pli-meta">
+                <span class="tag tag-pending" style="font-size:8px;">₨ 74,000 (partial)</span>
+              </div>
+              <div class="trust-score" style="margin-top:4px;">
+                <span style="color:var(--text3);">Your score:</span>
+                <div class="trust-bar"><div class="trust-fill" style="width:82%;"></div></div>
+                <span style="color:var(--accent-escrow);">8.2</span>
+              </div>
+            </div>
+            <div class="project-list-item">
+              <div class="pli-title">Open Manhole — Bahadurabad</div>
+              <div class="pli-meta">
+                <span class="tag tag-funded" style="font-size:8px;">₨ 89,000</span>
+                <span class="tag tag-urgent" style="font-size:8px;">5 bids</span>
+              </div>
+              <div class="trust-score" style="margin-top:4px;">
+                <span style="color:var(--text3);">Your score:</span>
+                <div class="trust-bar"><div class="trust-fill" style="width:82%;"></div></div>
+                <span style="color:var(--accent-escrow);">8.2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: auction detail -->
+        <div class="panel" style="overflow-y:auto;">
+          <!-- Stats row -->
+          <div class="bid-stat-row">
+            <div class="bid-stat">
+              <div class="panel-title">Escrow Pool</div>
+              <div class="panel-value" style="color:var(--accent-escrow);">₨ 100,000</div>
+              <div style="font-size:10px;color:var(--text2);margin-top:4px;">1,000 × 100 PKR units</div>
+            </div>
+            <div class="bid-stat">
+              <div class="panel-title">Fixer Payout (25%)</div>
+              <div class="panel-value" style="color:var(--accent-payout);">₨ 25,000</div>
+              <div style="font-size:10px;color:var(--text2);margin-top:4px;">Released on dual-lock verify</div>
+            </div>
+            <div class="bid-stat">
+              <div class="panel-title">Competing Bids</div>
+              <div class="panel-value">3</div>
+              <div style="font-size:10px;color:var(--text2);margin-top:4px;">Lowest timeline wins</div>
+            </div>
+          </div>
+
+          <!-- Bid form -->
+          <div class="bid-form">
+            <div style="font-family:var(--font-mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:12px;">Submit Your Bid</div>
+            <div class="form-row">
+              <div class="form-field">
+                <label class="form-label">Completion Timeline</label>
+                <input type="text" class="form-input" placeholder="e.g. 3 days" value="4 days">
+              </div>
+              <div class="form-field">
+                <label class="form-label">Start Date</label>
+                <input type="text" class="form-input" placeholder="DD/MM/YYYY" value="02/04/2026">
+              </div>
+              <div class="form-field">
+                <label class="form-label">Team Size</label>
+                <input type="text" class="form-input" placeholder="# workers" value="3">
+              </div>
+            </div>
+            <div style="margin-top:10px;">
+              <label class="form-label">Approach Note (optional)</label>
+              <input type="text" class="form-input" placeholder="Brief methodology..." value="Hydraulic excavation + PVC lining, 3-year durability guarantee">
+            </div>
+            <div style="display:flex;gap:8px;margin-top:12px;align-items:center;">
+              <button class="btn btn-primary">Submit Bid →</button>
+              <span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);">Bid locked by escrow until award decision</span>
+            </div>
+          </div>
+
+          <!-- Competing bids table -->
+          <div style="margin-top:20px;">
+            <div style="font-family:var(--font-mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:10px;">Competing Bids — Ranked by Trust Score × Timeline</div>
+            <table class="bids-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Fixer</th>
+                  <th>Trust Score</th>
+                  <th>Completion %</th>
+                  <th>Timeline</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="color:var(--accent-escrow);font-weight:700;">1</td>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                      <div class="fixer-avatar" style="width:28px;height:28px;font-size:11px;">AK</div>
+                      <div>
+                        <div style="color:var(--text);font-weight:600;">Arif Khan</div>
+                        <div style="font-size:9px;color:var(--text3);">Registered Contractor · Karachi</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="trust-score">
+                      <div class="trust-bar" style="width:56px;"><div class="trust-fill" style="width:94%;"></div></div>
+                      <span style="color:var(--accent-escrow);">9.4</span>
+                    </div>
+                  </td>
+                  <td style="color:var(--accent-verified);">98.2%</td>
+                  <td style="color:var(--text);">3 days</td>
+                  <td><span class="tag tag-funded">Leading</span></td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                      <div class="fixer-avatar" style="width:28px;height:28px;font-size:11px;">ZS</div>
+                      <div>
+                        <div style="color:var(--text);">Zain Sheikh</div>
+                        <div style="font-size:9px;color:var(--text3);">Civil Eng. Student · NED Univ.</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="trust-score">
+                      <div class="trust-bar" style="width:56px;"><div class="trust-fill" style="width:82%;"></div></div>
+                      <span style="color:var(--accent-escrow);">8.2</span>
+                    </div>
+                  </td>
+                  <td style="color:var(--accent-verified);">91.0%</td>
+                  <td>4 days</td>
+                  <td><span class="tag tag-pending">Active</span></td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                      <div class="fixer-avatar" style="width:28px;height:28px;font-size:11px;">MR</div>
+                      <div>
+                        <div style="color:var(--text);">M. Raza</div>
+                        <div style="font-size:9px;color:var(--text3);">Independent Worker</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="trust-score">
+                      <div class="trust-bar" style="width:56px;"><div class="trust-fill" style="width:67%;"></div></div>
+                      <span style="color:var(--text2);">6.7</span>
+                    </div>
+                  </td>
+                  <td>76.5%</td>
+                  <td>6 days</td>
+                  <td><span class="tag tag-pending">Active</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN C: ESCROW LEDGER -->
+    <section id="screenC" class="screen">
+      <div class="page-grid" style="grid-template-columns:1fr 1fr;height:100%;">
+        <!-- LEFT -->
+        <div class="panel" style="overflow-y:auto;">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Escrow Ledger</div>
+              <div class="panel-value" style="margin-top:6px;">₨ 100,000</div>
+              <div style="font-size:10px;color:var(--text2);margin-top:4px;">Storm Drain · Gulshan-e-Iqbal · Project #KHI-2024-0041</div>
+            </div>
+            <span class="tag tag-escrow">Smart Contract Locked</span>
+          </div>
+
+          <div class="split-visual">
+            <div class="split-seg" style="flex:70;background:var(--accent-funded);"></div>
+            <div class="split-seg" style="flex:25;background:var(--accent-payout);"></div>
+            <div class="split-seg" style="flex:5;background:var(--accent-handshake);"></div>
+          </div>
+
+          <div class="big-split">
+            <div class="split-block" style="background:var(--surface2);">
+              <div class="split-pct" style="color:var(--accent-funded);">70%</div>
+              <div class="split-role">Vendor DMV</div>
+              <div style="font-family:var(--font-mono);font-size:14px;font-weight:600;color:var(--text);margin-top:4px;">₨ 70,000</div>
+              <div class="split-desc">Digital Merchant Voucher for certified material suppliers. Non-cashable — redeemable at approved vendors only.</div>
+              <div class="contract-addr">0x4a3f…8b2c — Vendor Escrow</div>
+            </div>
+            <div class="split-block" style="background:var(--surface2);">
+              <div class="split-pct" style="color:var(--accent-payout);">25%</div>
+              <div class="split-role">Fixer Fee</div>
+              <div style="font-family:var(--font-mono);font-size:14px;font-weight:600;color:var(--text);margin-top:4px;">₨ 25,000</div>
+              <div class="split-desc">Held in escrow. Released to Fixer wallet only upon successful Dual-Lock Verification.</div>
+              <div class="contract-addr">0x9c1e…3a7d — Fixer Escrow</div>
+            </div>
+            <div class="split-block" style="background:var(--surface2);">
+              <div class="split-pct" style="color:var(--accent-handshake);">5%</div>
+              <div class="split-role">Auditor Fee</div>
+              <div style="font-family:var(--font-mono);font-size:14px;font-weight:600;color:var(--text);margin-top:4px;">₨ 5,000</div>
+              <div class="split-desc">Community Auditor compensation. Incentivizes honest, geo-fenced physical verification.</div>
+              <div class="contract-addr">0xf70b…1e9a — Auditor Escrow</div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- Timeline -->
+          <div class="panel-title" style="margin-bottom:12px;">Fund Flow Timeline</div>
+          <div class="flow-step">
+            <div class="flow-num" style="background:rgba(96,200,245,.2);color:var(--accent-funded);">1</div>
+            <div class="flow-content">
+              <div class="flow-title">Crowdfund Complete <span class="tag tag-funded" style="margin-left:6px;font-size:8px;">Done</span></div>
+              <div class="flow-desc">1,000 × ₨100 Units collected. Smart contract automatically locks all funds. No admin can access.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num" style="background:rgba(200,245,96,.2);color:var(--accent-escrow);">2</div>
+            <div class="flow-content">
+              <div class="flow-title">Reverse Auction Closes <span class="tag tag-escrow" style="margin-left:6px;font-size:8px;">Active</span></div>
+              <div class="flow-desc">Best-ranked Fixer awarded project. 70% DMV issued to vendor on commencement.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">3</div>
+            <div class="flow-content">
+              <div class="flow-title">Work Completion <span class="tag tag-pending" style="margin-left:6px;font-size:8px;">Pending</span></div>
+              <div class="flow-desc">Fixer uploads geo-tagged "After" photo. AI CV model cross-validates structural match.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">4</div>
+            <div class="flow-content">
+              <div class="flow-title">Human Handshake <span class="tag tag-pending" style="margin-left:6px;font-size:8px;">Pending</span></div>
+              <div class="flow-desc">Auditor QR scan geo-fenced within 50m of site. Both locks confirmed → payouts released.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Live ledger -->
+        <div class="panel" style="overflow-y:auto;">
+          <div class="panel-title" style="margin-bottom:14px;">Live Transaction Ledger</div>
+          <table class="bids-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Event</th>
+                <th>From</th>
+                <th>Amount</th>
+                <th>State</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>29 Mar 14:22</td>
+                <td>Fund Unit</td>
+                <td>0x8a3…</td>
+                <td style="color:var(--accent-escrow);">+₨ 100</td>
+                <td><span class="tag tag-escrow" style="font-size:8px;">Locked</span></td>
+              </tr>
+              <tr>
+                <td>29 Mar 14:19</td>
+                <td>Fund Unit</td>
+                <td>0x2c9…</td>
+                <td style="color:var(--accent-escrow);">+₨ 500</td>
+                <td><span class="tag tag-escrow" style="font-size:8px;">Locked</span></td>
+              </tr>
+              <tr>
+                <td>28 Mar 09:05</td>
+                <td>Batch Fund</td>
+                <td>0xb17…</td>
+                <td style="color:var(--accent-escrow);">+₨ 3,200</td>
+                <td><span class="tag tag-escrow" style="font-size:8px;">Locked</span></td>
+              </tr>
+              <tr>
+                <td>27 Mar 16:44</td>
+                <td>Batch Fund</td>
+                <td>0x44f…</td>
+                <td style="color:var(--accent-escrow);">+₨ 15,000</td>
+                <td><span class="tag tag-escrow" style="font-size:8px;">Locked</span></td>
+              </tr>
+              <tr>
+                <td>24 Mar 11:30</td>
+                <td>Initial Pool</td>
+                <td>Genesis</td>
+                <td style="color:var(--accent-escrow);">+₨ 81,200</td>
+                <td><span class="tag tag-escrow" style="font-size:8px;">Locked</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="divider"></div>
+
+          <div class="panel-title" style="margin-bottom:12px;">Escrow State Summary</div>
+          <div class="ledger-row">
+            <span class="ledger-label">Total Locked</span>
+            <span class="ledger-value" style="color:var(--accent-escrow);">₨ 100,000</span>
+          </div>
+          <div class="ledger-row">
+            <span class="ledger-label">Vendor DMV Issued</span>
+            <span class="ledger-value" style="color:var(--accent-funded);">₨ 70,000</span>
+          </div>
+          <div class="ledger-row">
+            <span class="ledger-label">Fixer Fee (held)</span>
+            <span class="ledger-value" style="color:var(--accent-payout);">₨ 25,000</span>
+          </div>
+          <div class="ledger-row">
+            <span class="ledger-label">Auditor Fee (held)</span>
+            <span class="ledger-value" style="color:var(--accent-handshake);">₨ 5,000</span>
+          </div>
+          <div class="ledger-row" style="border-top:1px solid var(--border2);margin-top:4px;padding-top:12px;">
+            <span class="ledger-label" style="color:var(--text);">Released to Date</span>
+            <span class="ledger-value" style="color:var(--text2);">₨ 0</span>
+          </div>
+          <div class="ledger-row">
+            <span class="ledger-label" style="color:var(--text);">Corruption Risk</span>
+            <span class="ledger-value" style="color:var(--accent-verified);">NULL — Automated</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN D: VERIFICATION -->
+    <section id="screenD" class="screen">
+      <div class="page-grid" style="grid-template-columns:1fr 1fr;height:100%;">
+        <!-- NODE 1: AI -->
+        <div class="panel" style="padding:0;overflow-y:auto;">
+          <div class="node-header">
+            <div class="node-num node1-num">1</div>
+            <div>
+              <div class="node-title">AI Verification Node</div>
+              <div class="node-sub">Computer Vision · Structural Match Analysis</div>
+            </div>
+            <span class="tag tag-verified" style="margin-left:auto;">CV Confirmed</span>
+          </div>
+
+          <div style="padding:20px;">
+            <div class="compare-wrap">
+              <div class="compare-slot">
+                <div class="compare-label">BEFORE</div>
+                <div class="image-placeholder" style="background:linear-gradient(135deg,#1a1a1a,#2a2a2a);">
+                  <div style="text-align:center;">
+                    <div style="font-size:32px;">🕳️</div>
+                    <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-top:6px;">Mar 25, 09:14 AM<br>24.9203° N, 67.1124° E</div>
+                  </div>
+                </div>
+              </div>
+              <div class="compare-slot">
+                <div class="compare-label">AFTER</div>
+                <div class="image-placeholder" style="background:linear-gradient(135deg,#0d1a10,#1a2d1a);">
+                  <div style="text-align:center;">
+                    <div style="font-size:32px;">🛣️</div>
+                    <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-top:6px;">Apr 01, 04:30 PM<br>24.9203° N, 67.1124° E</div>
+                  </div>
+                </div>
+                <div class="ai-overlay">
+                  <div class="ai-badge">
+                    <span style="font-size:14px;">✓</span>
+                    CV API · Structural Match: 94.7% Confidence
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- AI Detail -->
+            <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:14px;margin-bottom:14px;">
+              <div style="font-family:var(--font-mono);font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);margin-bottom:10px;">Analysis Report · CV Model v3.1</div>
+              <div class="ledger-row" style="border-color:var(--border);">
+                <span class="ledger-label">Geo-coordinate Match</span>
+                <span class="ledger-value" style="color:var(--accent-verified);">✓ Confirmed (±8m)</span>
+              </div>
+              <div class="ledger-row" style="border-color:var(--border);">
+                <span class="ledger-label">Structural Repair Score</span>
+                <span class="ledger-value" style="color:var(--accent-verified);">94.7%</span>
+              </div>
+              <div class="ledger-row" style="border-color:var(--border);">
+                <span class="ledger-label">Metadata Integrity</span>
+                <span class="ledger-value" style="color:var(--accent-verified);">✓ EXIF Valid</span>
+              </div>
+              <div class="ledger-row" style="border-color:var(--border);">
+                <span class="ledger-label">Image Manipulation</span>
+                <span class="ledger-value" style="color:var(--accent-verified);">None Detected</span>
+              </div>
+              <div class="ledger-row" style="border-color:transparent;">
+                <span class="ledger-label">Timestamp Delta</span>
+                <span class="ledger-value">4 days, 7h 16m</span>
+              </div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(96,245,192,.08);border:1px solid rgba(96,245,192,.25);border-radius:4px;">
+              <span style="font-size:18px;">🤖</span>
+              <div style="font-family:var(--font-mono);font-size:10px;color:var(--accent-verified);">Node 1 PASSED — Awaiting Human Handshake to release escrow</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NODE 2: HUMAN -->
+        <div class="panel" style="padding:0;overflow-y:auto;">
+          <div class="node-header">
+            <div class="node-num node2-num">2</div>
+            <div>
+              <div class="node-title">Human Handshake Node</div>
+              <div class="node-sub">Community Auditor · Geo-fenced QR Verification</div>
+            </div>
+            <span class="tag tag-pending" style="margin-left:auto;">Awaiting Scan</span>
+          </div>
+
+          <div style="padding:20px;">
+            <!-- Auditor info -->
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:12px;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;">
+              <div class="fixer-avatar" style="width:40px;height:40px;font-size:14px;background:rgba(176,96,245,.2);color:var(--accent-handshake);">FA</div>
+              <div>
+                <div style="font-weight:600;font-size:13px;">Fatima Aslam</div>
+                <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);">Community Auditor #KHI-AUD-0188 · 47 verifications</div>
+                <div style="display:flex;gap:6px;margin-top:4px;">
+                  <span class="tag tag-hand" style="font-size:8px;">Auditor</span>
+                  <span class="tag tag-verified" style="font-size:8px;">Trust: 9.1</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="qr-wrap">
+              <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;">Project Closure QR · Scan within geo-fence</div>
+              <div class="qr-box">
+                <div class="qr-scan-line"></div>
+                <!-- Simulated QR pattern -->
+                <div class="scan-grid">
+                  <!-- Row pattern approximation -->
+                  <div class="scan-cell w"></div><div class="scan-cell w"></div><div class="scan-cell w"></div><div class="scan-cell w"></div><div class="scan-cell w"></div><div class="scan-cell"></div><div class="scan-cell w"></div>
+                  <div class="scan-cell w"></div><div class="scan-cell"></div><div class="scan-cell"></div><div class="scan-cell"></div><div class="scan-cell w"></div><div class="scan-cell"></div><div class="scan-cell w"></div>
+                  <div class="scan-cell w"></div><div class="scan-cell"></div><div class="scan-cell w"></div><div class="scan-cell"></div><div class="scan-cell w"></div><div class="scan-cell"></div><div class="scan-cell w"></div>
+                  <div class="scan-cell w"></div><div class="scan-cell"></div><div class="scan-cell w"></div><div class="scan-cell w"></div><div class="scan-cell w"></div><div class="scan-cell"></div><div class="scan-cell w"></div>
+                  <div class="scan-cell w"></div><div class="scan-cell"></div><div class="scan-cell"></div><div class="scan-cell"></div><div class="scan-cell w"></div><div class="scan-cell"></div><div class="scan-cell w"></div>
+                  <div class="scan-cell w"></div><div class="scan-cell w"></div><div class="scan-cell w"></div><div class="scan-cell w"></div><div class="scan-cell w"></div><div class="scan-cell w"></div><div class="scan-cell w"></div>
+                  <div class="scan-cell"></div><div class="scan-cell w"></div><div class="scan-cell"></div><div class="scan-cell w"></div><div class="scan-cell"></div><div class="scan-cell w"></div><div class="scan-cell"></div>
+                </div>
+              </div>
+              <div class="geo-badge">
+                <span>📍</span>
+                Geo-fence active · Must scan within 50m of 24.9203° N, 67.1124° E
+              </div>
+              <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);">QR valid for 24h · Rotates on each scan attempt</div>
+            </div>
+
+            <!-- Dual lock status -->
+            <div class="panel-title" style="margin-bottom:10px;">Dual-Lock Status</div>
+            <div class="dual-lock-status">
+              <div class="lock-row done">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span class="lock-check">✓</span>
+                  <div>
+                    <div style="color:var(--text);font-weight:600;font-size:11px;">AI Computer Vision</div>
+                    <div style="color:var(--text3);font-size:9px;">Structural match 94.7% confirmed</div>
+                  </div>
+                </div>
+                <span class="tag tag-verified" style="font-size:8px;">Passed</span>
+              </div>
+              <div class="lock-row">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span class="lock-pending">○</span>
+                  <div>
+                    <div style="color:var(--text2);font-size:11px;">Human Auditor Scan</div>
+                    <div style="color:var(--text3);font-size:9px;">Awaiting QR scan within geo-fence</div>
+                  </div>
+                </div>
+                <span class="tag tag-pending" style="font-size:8px;">Pending</span>
+              </div>
+            </div>
+
+            <div style="margin-top:14px;padding:10px 12px;background:rgba(176,96,245,.08);border:1px solid rgba(176,96,245,.2);border-radius:4px;font-family:var(--font-mono);font-size:9px;color:var(--accent-handshake);">
+              ⚠ Both locks required for payout. Neither Fixer nor Auditor alone can trigger release.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN E: WALLET -->
+    <section id="screenE" class="screen">
+      <div class="page-grid" style="grid-template-columns:240px 1fr;height:100%;">
+        <!-- Role selector -->
+        <div class="panel" style="padding:0;overflow-y:auto;">
+          <div style="padding:14px 16px;border-bottom:1px solid var(--border);font-weight:600;font-size:13px;">Stakeholder View</div>
+          <div class="role-tabs">
+            <div class="role-tab active" onclick="setRole('donor',this)">
+              <div style="display:flex;align-items:center;gap:6px;">
+                <span>🏛️</span>
+                <div class="role-name">Donor</div>
+              </div>
+              <div class="role-id">Imran Siddiqui · #DNR-4421</div>
+              <div style="display:flex;gap:4px;margin-top:4px;"><span class="tag tag-funded" style="font-size:7px;">Active</span></div>
+            </div>
+            <div class="role-tab" onclick="setRole('fixer',this)">
+              <div style="display:flex;align-items:center;gap:6px;">
+                <span>🔧</span>
+                <div class="role-name">Fixer</div>
+              </div>
+              <div class="role-id">Zain Sheikh · #FXR-0892</div>
+              <div style="display:flex;gap:4px;margin-top:4px;"><span class="tag tag-payout" style="font-size:7px;">Escrow Held</span></div>
+            </div>
+            <div class="role-tab" onclick="setRole('auditor',this)">
+              <div style="display:flex;align-items:center;gap:6px;">
+                <span>🔍</span>
+                <div class="role-name">Auditor</div>
+              </div>
+              <div class="role-id">Fatima Aslam · #AUD-0188</div>
+              <div style="display:flex;gap:4px;margin-top:4px;"><span class="tag tag-hand" style="font-size:7px;">47 verifications</span></div>
+            </div>
+            <div class="role-tab" onclick="setRole('vendor',this)">
+              <div style="display:flex;align-items:center;gap:6px;">
+                <span>🏪</span>
+                <div class="role-name">Vendor</div>
+              </div>
+              <div class="role-id">Karachi Build Co. · #VND-112</div>
+              <div style="display:flex;gap:4px;margin-top:4px;"><span class="tag tag-funded" style="font-size:7px;">DMV Redeemer</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wallet detail -->
+        <div id="walletDetail" class="panel" style="overflow-y:auto;padding:0;">
+          <!-- Donor view by default -->
+          <div id="walletDonor">
+            <div class="wallet-balance" style="background:var(--border);">
+              <div class="balance-card">
+                <div class="balance-lbl">Total Donated</div>
+                <div class="balance-val" style="color:var(--accent-funded);">₨ 4,500</div>
+                <div class="balance-sub">45 × 100 PKR Units</div>
+              </div>
+              <div class="balance-card">
+                <div class="balance-lbl">Projects Backed</div>
+                <div class="balance-val">7</div>
+                <div class="balance-sub">3 completed · 4 active</div>
+              </div>
+              <div class="balance-card">
+                <div class="balance-lbl">Impact Score</div>
+                <div class="balance-val" style="color:var(--accent-escrow);">84</div>
+                <div class="balance-sub">Top 12% of donors</div>
+              </div>
+            </div>
+            <div style="padding:20px;">
+              <div class="panel-title" style="margin-bottom:12px;">Transaction History</div>
+              <table class="tx-table">
+                <thead><tr><th>Date</th><th>Project</th><th>Units</th><th>Amount</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td>29 Mar</td><td>Storm Drain · Gulshan</td><td>10</td><td class="tx-amount out">−₨ 1,000</td><td><span class="tag tag-escrow" style="font-size:8px;">Locked</span></td></tr>
+                  <tr><td>25 Mar</td><td>Streetlight · PECHS</td><td>5</td><td class="tx-amount out">−₨ 500</td><td><span class="tag tag-escrow" style="font-size:8px;">Locked</span></td></tr>
+                  <tr><td>20 Mar</td><td>Pothole · Saddar</td><td>20</td><td class="tx-amount out">−₨ 2,000</td><td><span class="tag tag-verified" style="font-size:8px;">Verified ✓</span></td></tr>
+                  <tr><td>15 Mar</td><td>Road Crack · Clifton</td><td>5</td><td class="tx-amount out">−₨ 500</td><td><span class="tag tag-escrow" style="font-size:8px;">Locked</span></td></tr>
+                  <tr><td>02 Mar</td><td>Wall Repair · N. Nazimabad</td><td>5</td><td class="tx-amount out">−₨ 500</td><td><span class="tag tag-pending" style="font-size:8px;">Pending</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-tab active" onclick="switchTab('A',this)">
+      <span class="nav-icon">🗺</span>
+      The Ballot
+    </button>
+    <button class="nav-tab" onclick="switchTab('B',this)">
+      <span class="nav-icon">⚡</span>
+      Auction
+    </button>
+    <button class="nav-tab" onclick="switchTab('C',this)">
+      <span class="nav-icon">🔐</span>
+      Escrow
+    </button>
+    <button class="nav-tab" onclick="switchTab('D',this)">
+      <span class="nav-icon">✅</span>
+      Verify
+    </button>
+    <button class="nav-tab" onclick="switchTab('E',this)">
+      <span class="nav-icon">💳</span>
+      Wallet
+    </button>
+  </nav>
+
+</div>
+
+<script>
+function switchTab(id, el) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('screen'+id).classList.add('active');
+  el.classList.add('active');
+}
+
+function setRole(role, el) {
+  document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+
+  const container = document.getElementById('walletDonor');
+  const roleData = {
+    donor: {
+      stats: [
+        {lbl:'Total Donated', val:'₨ 4,500', sub:'45 × 100 PKR Units', color:'var(--accent-funded)'},
+        {lbl:'Projects Backed', val:'7', sub:'3 completed · 4 active', color:'var(--text)'},
+        {lbl:'Impact Score', val:'84', sub:'Top 12% of donors', color:'var(--accent-escrow)'},
+      ],
+      txs: [
+        {date:'29 Mar', proj:'Storm Drain · Gulshan', units:10, amt:'−₨ 1,000', dir:'out', status:'Locked', cls:'tag-escrow'},
+        {date:'25 Mar', proj:'Streetlight · PECHS', units:5, amt:'−₨ 500', dir:'out', status:'Locked', cls:'tag-escrow'},
+        {date:'20 Mar', proj:'Pothole · Saddar', units:20, amt:'−₨ 2,000', dir:'out', status:'Verified ✓', cls:'tag-verified'},
+      ]
+    },
+    fixer: {
+      stats: [
+        {lbl:'Escrow Held', val:'₨ 25,000', sub:'Awaiting dual-lock', color:'var(--accent-payout)'},
+        {lbl:'Completed Jobs', val:'14', sub:'Lifetime completions', color:'var(--text)'},
+        {lbl:'Trust Score', val:'8.2', sub:'Top 18% of fixers', color:'var(--accent-escrow)'},
+      ],
+      txs: [
+        {date:'In Progress', proj:'Storm Drain · Gulshan', units:'—', amt:'₨ 25,000', dir:'locked', status:'Escrowed', cls:'tag-payout'},
+        {date:'12 Mar', proj:'Pothole · Clifton', units:'—', amt:'+₨ 12,500', dir:'in', status:'Released', cls:'tag-verified'},
+        {date:'Feb 28', proj:'Streetlight · DHA', units:'—', amt:'+₨ 8,750', dir:'in', status:'Released', cls:'tag-verified'},
+      ]
+    },
+    auditor: {
+      stats: [
+        {lbl:'Fees Earned', val:'₨ 11,750', sub:'47 verifications', color:'var(--accent-handshake)'},
+        {lbl:'Pending Fees', val:'₨ 5,000', sub:'1 job in progress', color:'var(--accent-payout)'},
+        {lbl:'Accuracy', val:'100%', sub:'No disputed audits', color:'var(--accent-verified)'},
+      ],
+      txs: [
+        {date:'In Progress', proj:'Storm Drain · Gulshan', units:'—', amt:'₨ 5,000', dir:'locked', status:'Escrowed', cls:'tag-payout'},
+        {date:'14 Mar', proj:'Pothole · Clifton', units:'—', amt:'+₨ 2,500', dir:'in', status:'Released', cls:'tag-verified'},
+        {date:'Mar 02', proj:'Wall Repair · Nazimabad', units:'—', amt:'+₨ 1,750', dir:'in', status:'Released', cls:'tag-verified'},
+      ]
+    },
+    vendor: {
+      stats: [
+        {lbl:'DMV Balance', val:'₨ 70,000', sub:'Digital Merchant Voucher', color:'var(--accent-funded)'},
+        {lbl:'Redeemed', val:'₨ 140,000', sub:'Lifetime redemptions', color:'var(--text)'},
+        {lbl:'Active Contracts', val:'3', sub:'Ongoing projects', color:'var(--accent-escrow)'},
+      ],
+      txs: [
+        {date:'29 Mar', proj:'Storm Drain · Gulshan', units:'—', amt:'+₨ 70,000', dir:'in', status:'DMV Issued', cls:'tag-funded'},
+        {date:'12 Mar', proj:'Pothole · Clifton', units:'—', amt:'−₨ 35,000', dir:'out', status:'Redeemed', cls:'tag-verified'},
+        {date:'Mar 01', proj:'Streetlight · DHA', units:'—', amt:'+₨ 49,000', dir:'in', status:'DMV Issued', cls:'tag-funded'},
+      ]
+    }
+  };
+
+  const d = roleData[role];
+  container.innerHTML = `
+    <div class="wallet-balance" style="background:var(--border);">
+      ${d.stats.map(s=>`
+        <div class="balance-card">
+          <div class="balance-lbl">${s.lbl}</div>
+          <div class="balance-val" style="color:${s.color};">${s.val}</div>
+          <div class="balance-sub">${s.sub}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div style="padding:20px;">
+      <div class="panel-title" style="margin-bottom:12px;">Transaction History</div>
+      <table class="tx-table">
+        <thead><tr><th>Date</th><th>Project</th><th>Units</th><th>Amount</th><th>Status</th></tr></thead>
+        <tbody>
+          ${d.txs.map(t=>`
+            <tr>
+              <td>${t.date}</td>
+              <td>${t.proj}</td>
+              <td>${t.units}</td>
+              <td class="tx-amount ${t.dir}">${t.amt}</td>
+              <td><span class="tag ${t.cls}" style="font-size:8px;">${t.status}</span></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+</script>
+</body>
+</html>

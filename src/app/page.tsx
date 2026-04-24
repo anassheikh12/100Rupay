@@ -1,101 +1,157 @@
+"use client";
+
 import Image from "next/image";
+import dynamic from "next/dynamic";
+
+const Scene3D = dynamic(
+  () => import("@/components/canvas/Scene3D").then((mod) => mod.Scene3D),
+  { ssr: false }
+);
+
+import { motion, useScroll, useSpring, useTransform, useInView } from "framer-motion";
+import React, { useState, useRef } from "react";
+import { Navbar } from "@/components/layout/Navbar";
+import { Hero } from "@/components/sections/Hero";
+import { ImpactFeed } from "@/components/sections/ImpactFeed";
+import { TokenCounter } from "@/components/sections/TokenCounter";
+import { ReportingModal } from "@/components/modals/ReportingModal";
+import { CustomCursor } from "@/components/ui/CustomCursor";
+import { SplashScreen } from "@/components/ui/SplashScreen";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const bgOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 0.1, 0]);
+
+  const section1Ref = useRef(null);
+  const section2Ref = useRef(null);
+  const section3Ref = useRef(null);
+
+  // We use amount: 0.5 or margin to trigger when section takes up significant viewport space
+  const isSection3InView = useInView(section3Ref, { margin: "-40% 0px -40% 0px" });
+  const isSection2InView = useInView(section2Ref, { margin: "-40% 0px -40% 0px" });
+  
+  let activeSection = 1;
+  if (isSection3InView) activeSection = 3;
+  else if (isSection2InView) activeSection = 2;
+
+  return (
+    <main className="relative bg-background min-h-screen selection:bg-lime-neon selection:text-black">
+      <SplashScreen />
+      <Scene3D activeSection={activeSection} />
+      <CustomCursor />
+      
+      {/* Scroll Progress Bar */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-1 bg-lime-neon z-[60] origin-left"
+        style={{ scaleX }}
+      />
+
+      <Navbar />
+
+      <div ref={section1Ref}>
+        <Hero />
+      </div>
+
+      {/* Dynamic Background Overlay */}
+      <motion.div 
+        className="fixed inset-0 z-[-1] bg-lime-neon pointer-events-none"
+        style={{ opacity: bgOpacity }} 
+      />
+
+      <div className="relative z-10">
+        {/* Narrative Section 1 (0% - 30%) */}
+        <section className="min-h-[80vh] flex items-center justify-center px-6 pointer-events-none">
+          <motion.h2 
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ margin: "-20% 0px" }}
+            className="text-5xl md:text-7xl font-rajdhani font-bold text-white text-center max-w-3xl drop-shadow-2xl"
           >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            Choti Raqam, <br/>
+            <span className="text-lime-neon">Bara Asar.</span>
+          </motion.h2>
+        </section>
+
+        {/* Narrative Section 2 (30% - 60%) */}
+        <section ref={section2Ref} className="min-h-[80vh] flex items-center justify-center px-6 pointer-events-none">
+          <motion.h2 
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ margin: "-20% 0px" }}
+            className="text-4xl md:text-5xl font-rajdhani font-medium text-zinc-300 text-center max-w-4xl drop-shadow-2xl"
           >
-            Read our docs
-          </a>
+            Hamari AI har report ki tasdeeq karti hai taake aapka <span className="text-lime-neon font-bold">paisa sahi jagah lage.</span>
+          </motion.h2>
+        </section>
+        <TokenCounter />
+        
+        <div ref={section3Ref}>
+          <ImpactFeed />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+        {/* Call to Action Section */}
+        <section className="py-32 px-6 flex flex-col items-center justify-center text-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              className="p-12 md:p-20 rounded-[3rem] bg-surface border border-border relative overflow-hidden max-w-4xl w-full"
+            >
+              <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(50,205,50,0.1),transparent)]" />
+              
+              <h2 className="font-rajdhani font-bold text-4xl md:text-6xl text-white mb-6 relative z-10">
+                Ready to solve 
+                <br />
+                <span className="text-lime-neon">your neighborhood?</span>
+              </h2>
+              <p className="text-zinc-500 font-medium text-lg mb-10 relative z-10 max-w-lg mx-auto">
+                Join the network of thousands of citizens taking direct action through 100 Rupay.
+              </p>
+              
+              <button 
+                onClick={() => setIsModalOpen(true)}
+                className="relative z-10 px-10 py-5 bg-lime-neon text-black font-rajdhani font-bold text-xl rounded-full hover:scale-105 transition-transform shadow-[0_0_30px_rgba(50,205,50,0.3)]"
+              >
+                REPORT YOUR FIRST ISSUE
+              </button>
+            </motion.div>
+        </section>
+
+        {/* Footer */}
+        <footer className="py-12 border-t border-border px-6">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="flex items-center gap-3">
+              <Image 
+                src="/logo.png" 
+                alt="100 Rupay Logo" 
+                width={80} 
+                height={32} 
+                className="object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all"
+              />
+              <span className="font-rajdhani font-bold text-zinc-500 tracking-tighter">
+                / PAKISTAN 2026
+              </span>
+            </div>
+            
+            <div className="flex gap-8 font-rajdhani text-xs font-bold text-zinc-600 tracking-widest uppercase">
+              <a href="#" className="hover:text-lime-neon transition-colors">Infrastructure</a>
+              <a href="#" className="hover:text-lime-neon transition-colors">Governance</a>
+              <a href="#" className="hover:text-lime-neon transition-colors">Transparency</a>
+            </div>
+          </div>
+        </footer>
+      </div>
+
+      <ReportingModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
+    </main>
   );
 }

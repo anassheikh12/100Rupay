@@ -11,7 +11,37 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        emerald: {
+          900: "#002200",
+          800: "#004400",
+          700: "#005500",
+          600: "#006600", // Pakistani Emerald Green
+        },
+        lime: {
+          neon: "#32CD32",
+        },
+        surface: {
+          DEFAULT: "#141714",
+          light: "#1a1d1a",
+        },
+        border: {
+          DEFAULT: "#252825",
+          highlight: "#2f342f",
+        }
       },
+      fontFamily: {
+        rajdhani: ["var(--font-rajdhani)"],
+        space: ["var(--font-space-grotesk)"],
+      },
+      animation: {
+        'scan': 'scan 2s linear infinite',
+      },
+      keyframes: {
+        scan: {
+          '0%': { top: '0%' },
+          '100%': { top: '100%' },
+        }
+      }
     },
   },
   plugins: [],
