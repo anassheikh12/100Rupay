@@ -2,14 +2,11 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import dynamic from "next/dynamic";
+
 import Link from "next/link";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 
-const InteractiveCity = dynamic(
-  () => import("../canvas/InteractiveCity").then((mod) => mod.InteractiveCity),
-  { ssr: false }
-);
+
 
 export const Hero = () => {
   return (

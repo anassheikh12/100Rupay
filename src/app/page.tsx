@@ -1,14 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import dynamic from "next/dynamic";
 
-const Scene3D = dynamic(
-  () => import("@/components/canvas/Scene3D").then((mod) => mod.Scene3D),
-  { ssr: false }
-);
 
-import { motion, useScroll, useSpring, useTransform, useInView } from "framer-motion";
+
+
+import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import React, { useState, useRef } from "react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Hero } from "@/components/sections/Hero";
@@ -33,13 +30,9 @@ export default function Home() {
   const section2Ref = useRef(null);
   const section3Ref = useRef(null);
 
-  // We use amount: 0.5 or margin to trigger when section takes up significant viewport space
-  const isSection3InView = useInView(section3Ref, { margin: "-40% 0px -40% 0px" });
-  const isSection2InView = useInView(section2Ref, { margin: "-40% 0px -40% 0px" });
+
   
-  let activeSection = 1;
-  if (isSection3InView) activeSection = 3;
-  else if (isSection2InView) activeSection = 2;
+
 
   return (
     <main className="relative bg-background min-h-screen selection:bg-lime-neon selection:text-black">
