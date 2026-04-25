@@ -18,7 +18,7 @@ const config: Config = {
           600: "#006600", // Pakistani Emerald Green
         },
         lime: {
-          neon: "#32CD32",
+          neon: "#c8f560",
         },
         surface: {
           DEFAULT: "#141714",

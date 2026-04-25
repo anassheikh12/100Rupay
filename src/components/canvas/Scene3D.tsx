@@ -17,7 +17,7 @@ const Coin = ({ activeSection }: CoinProps) => {
   const logoTexture = useTexture("/logo.png");
   
   // Create persistent colors for lerping
-  const baseColor = useRef(new THREE.Color("#32CD32")).current;
+  const baseColor = useRef(new THREE.Color("#c8f560")).current;
   const pulseColor = useRef(new THREE.Color("#C8F560")).current;
 
   const springX = useSpring(0, { stiffness: 120, damping: 14 });
@@ -80,7 +80,7 @@ const Coin = ({ activeSection }: CoinProps) => {
             color="#111111"
             metalness={0.9}
             roughness={0.1}
-            emissive="#32CD32"
+            emissive="#c8f560"
             emissiveIntensity={0.5}
           />
           <Decal
@@ -93,7 +93,7 @@ const Coin = ({ activeSection }: CoinProps) => {
               transparent
               polygonOffset
               polygonOffsetFactor={-1}
-              emissive="#32CD32"
+              emissive="#c8f560"
               emissiveIntensity={0.5}
             />
           </Decal>
@@ -107,7 +107,7 @@ const Coin = ({ activeSection }: CoinProps) => {
               transparent
               polygonOffset
               polygonOffsetFactor={-1}
-              emissive="#32CD32"
+              emissive="#c8f560"
               emissiveIntensity={0.5}
             />
           </Decal>
@@ -116,8 +116,8 @@ const Coin = ({ activeSection }: CoinProps) => {
             <torusGeometry args={[1.5, 0.05, 16, 100]} />
             <meshStandardMaterial
               ref={glowMaterialRef}
-              color="#32CD32"
-              emissive="#32CD32"
+              color="#c8f560"
+              emissive="#c8f560"
               emissiveIntensity={2}
               toneMapped={false}
             />

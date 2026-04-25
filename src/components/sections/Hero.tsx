@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 
 const InteractiveCity = dynamic(
@@ -13,7 +14,7 @@ const InteractiveCity = dynamic(
 export const Hero = () => {
   return (
     <section className="relative h-screen w-full flex items-center justify-center overflow-hidden">
-      <InteractiveCity />
+      {/* <InteractiveCity /> */}
 
       <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
         <motion.div
@@ -23,7 +24,7 @@ export const Hero = () => {
           className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-600/10 border border-emerald-600/30 text-lime-neon font-rajdhani text-xs font-bold tracking-[0.2em] mb-6"
         >
           <ShieldCheck className="w-4 h-4" />
-          GOVERNMENT-BACKED ESCROW NETWORK
+          COMMUNITY-BACKED ESCROW NETWORK
         </motion.div>
 
         <motion.h1
@@ -45,23 +46,23 @@ export const Hero = () => {
           transition={{ duration: 1, delay: 0.6 }}
           className="max-w-2xl mx-auto text-zinc-400 text-lg md:text-xl font-medium leading-relaxed mb-10"
         >
-          Pakistan’s first AI-verified civic crowdfunding platform. Fix your street for just 100 Rupay.
+          Pakistan’s first AI-verified civic crowdfunding platform. Fix your street for just 100 Rupees.
         </motion.p>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="flex flex-col md:flex-row items-center justify-center gap-4"
+          className="flex flex-col md:flex-row items-center justify-center gap-4 relative z-20"
         >
-          <button className="group relative px-8 py-4 bg-lime-neon text-black font-rajdhani font-bold text-lg rounded-full flex items-center gap-3 overflow-hidden transition-all hover:pr-10">
+          <Link href="#" className="group relative px-8 py-4 bg-lime-neon text-black font-rajdhani font-bold text-lg rounded-full flex items-center gap-3 overflow-hidden transition-all hover:pr-10">
             REPORT AN ISSUE
             <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
-          </button>
+          </Link>
           
-          <button className="px-8 py-4 bg-transparent border border-zinc-800 text-zinc-300 font-rajdhani font-bold text-lg rounded-full hover:bg-zinc-900 transition-colors">
+          <Link href="#" className="px-8 py-4 bg-transparent border border-zinc-800 text-zinc-300 font-rajdhani font-bold text-lg rounded-full hover:bg-zinc-900 transition-colors">
             VIEW LIVE MAP
-          </button>
+          </Link>
         </motion.div>
       </div>
 

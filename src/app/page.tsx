@@ -44,7 +44,7 @@ export default function Home() {
   return (
     <main className="relative bg-background min-h-screen selection:bg-lime-neon selection:text-black">
       <SplashScreen />
-      <Scene3D activeSection={activeSection} />
+      {/* <Scene3D activeSection={activeSection} /> */}
       <CustomCursor />
       
       {/* Scroll Progress Bar */}
