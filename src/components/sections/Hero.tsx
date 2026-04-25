@@ -52,7 +52,7 @@ export const Hero = () => {
           transition={{ duration: 0.8, delay: 0.8 }}
           className="flex flex-col md:flex-row items-center justify-center gap-4 relative z-20"
         >
-          <Link href="https://100rupayfrontend.vercel.app/report" className="group relative px-8 py-4 bg-lime-neon text-black font-rajdhani font-bold text-lg rounded-full flex items-center gap-3 overflow-hidden transition-all hover:pr-10">
+          <Link href="https://100rupayfrontend.vercel.app/" className="group relative px-8 py-4 bg-lime-neon text-black font-rajdhani font-bold text-lg rounded-full flex items-center gap-3 overflow-hidden transition-all hover:pr-10">
             REPORT AN ISSUE
             <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
           </Link>
