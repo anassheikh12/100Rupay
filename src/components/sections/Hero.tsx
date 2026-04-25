@@ -11,6 +11,24 @@ import { ArrowRight, ShieldCheck } from "lucide-react";
 export const Hero = () => {
   return (
     <section className="relative h-screen w-full flex items-center justify-center overflow-hidden">
+      {/* ── Radial green glow (hero-specific) ── */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse 70% 50% at 50% 60%, rgba(50,205,50,0.08) 0%, transparent 70%)",
+        }}
+      />
+
+      {/* ── Subtle vignette ── */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(13,15,14,0.85) 100%)",
+        }}
+      />
+
       {/* <InteractiveCity /> */}
 
       <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
@@ -52,12 +70,12 @@ export const Hero = () => {
           transition={{ duration: 0.8, delay: 0.8 }}
           className="flex flex-col md:flex-row items-center justify-center gap-4 relative z-20"
         >
-          <Link href="https://100rupayfrontend.vercel.app/" className="group relative px-8 py-4 bg-lime-neon text-black font-rajdhani font-bold text-lg rounded-full flex items-center gap-3 overflow-hidden transition-all hover:pr-10">
+          <Link href="https://100rupayfrontend.vercel.app/" target="_blank" rel="noopener noreferrer" className="group relative px-8 py-4 bg-lime-neon text-black font-rajdhani font-bold text-lg rounded-full flex items-center gap-3 overflow-hidden transition-all hover:pr-10">
             REPORT AN ISSUE
             <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
           </Link>
           
-          <Link href="https://100rupayfrontend.vercel.app/" className="px-8 py-4 bg-transparent border border-zinc-800 text-zinc-300 font-rajdhani font-bold text-lg rounded-full hover:bg-zinc-900 transition-colors">
+          <Link href="https://100rupayfrontend.vercel.app/" target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-transparent border border-zinc-800 text-zinc-300 font-rajdhani font-bold text-lg rounded-full hover:bg-zinc-900 transition-colors">
             VIEW LIVE MAP
           </Link>
         </motion.div>

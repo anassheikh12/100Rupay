@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Wallet, LogIn, Menu } from "lucide-react";
-
+import Link from "next/link";
 import Image from "next/image";
 
 export const Navbar = () => {
@@ -46,10 +46,15 @@ export const Navbar = () => {
             </span>
           </div>
 
-          <button className="flex items-center gap-2 px-5 py-2 bg-lime-neon text-black font-rajdhani font-bold text-sm rounded-full transition-transform hover:scale-105 active:scale-95">
+          <Link
+            href="https://100rupayfrontend.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-5 py-2 bg-lime-neon text-black font-rajdhani font-bold text-sm rounded-full transition-transform hover:scale-105 active:scale-95"
+          >
             <LogIn className="w-4 h-4" />
             LOGIN
-          </button>
+          </Link>
         </div>
 
         <div className="md:hidden">

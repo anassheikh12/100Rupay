@@ -24,6 +24,19 @@ body {
   cursor: none; /* We will use a custom cursor */
 }
 
+/* Full-page grid — fixed so it always shows behind all sections */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(100, 200, 100, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(100, 200, 100, 0.07) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
 @layer utilities {
   .glass {
     background: rgba(20, 23, 20, 0.7);
